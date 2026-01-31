@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
@@ -168,7 +169,9 @@ public class painel {
         if(quantidadeIngressos==1){
             String nomeParticipante = input.nextLine();
             int validade = Eventos.get(id).setParticipantes(nomeParticipante);
-            if(Eventos.get(id).setParticipantes(nomeParticipante)==-1) return 14;// Código que indica que o participante já cadastrado anteriormente
+            if(Eventos.get(id).setParticipantes(nomeParticipante)==-1) return 14; // Código que indica que o participante já cadastrado anteriormente
+            int deduzirIngressos = ingressos.get(id).get(loteValido);
+            verificarLotes.put(loteValido, deduzirIngressos-1);
 
         } else{
             HashSet<String> nomesParticipantes = new HashSet<>();
@@ -176,18 +179,30 @@ public class painel {
                 nomesParticipantes.add(input.nextLine());
             }
 
-            if(!Eventos.get(id).setParticipantes(nomesParticipantes)) return 15; // Código que indica que o participante já cadastrado
+            ArrayList<Integer> validade = Eventos.get(id).setParticipantes(nomesParticipantes);
+            if(validade.get(0)==-1){
+                return 15; // Código que indica que nenhum participante foi cadastrado por algum motivo
+            }
+            if(validade.get(0)==1){
+
+                int deduzirIngressos = ingressos.get(id).get(loteValido);
+                deduzirIngressos = deduzirIngressos - validade.get(1);
+                verificarLotes.put(loteValido, deduzirIngressos);
+                return 21; // Código que indica que nem todos os participantes foram adicionados
+            }
+
+
+            int deduzirIngressos = ingressos.get(id).get(loteValido);
+            deduzirIngressos = deduzirIngressos - quantidadeIngressos;
+            verificarLotes.put(loteValido, deduzirIngressos);
+            return 22; // Código que indica que todos os participantes foram adicionados com sucesso;
 
         }
 
 
-
-
         // Se existe, então deduz do lote atual a quantidade de ingressos
 
-
-
-        return 0;
+        return 23; // Código que indica que o participante foi cadastrado com sucesso
     }
 
 

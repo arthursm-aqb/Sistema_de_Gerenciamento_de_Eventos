@@ -1,4 +1,4 @@
-import java.util.List;
+import java.util.ArrayList;
 import java.util.HashSet;
 
 public class evento{
@@ -37,11 +37,35 @@ public class evento{
 
     }
 
-    public boolean setParticipantes(HashSet<String> nomes){
+    public ArrayList<Integer> setParticipantes(HashSet<String> nomes){
 
-        participantes.addAll(nomes);
+        int tamNomes = nomes.size();
+        int tamAtual = participantes.size();
+
+        if(!participantes.addAll(nomes)){
+            ArrayList<Integer> par = new ArrayList(1);
+            par.add(-1);
+            return par;
+        }
+
         numParticipantes = participantes.size();
-        return true;
+
+        int tamFinal = participantes.size();
+
+        if(tamNomes+tamAtual != tamFinal){
+
+            ArrayList<Integer> par = new ArrayList<>(2);
+            par.add(1);
+            par.add(tamFinal-tamAtual);
+            return par;
+        }
+
+        numParticipantes = participantes.size();
+        ArrayList<Integer> par = new ArrayList<>(2);
+        par.add(0);
+        par.add(tamFinal-tamAtual);
+
+        return par;
         
     }
 
