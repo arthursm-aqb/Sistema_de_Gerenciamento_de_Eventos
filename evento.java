@@ -24,6 +24,7 @@ public class evento{
     public int getNumParticipantes(){ return this.numParticipantes;}
     public int getCapacidade(){ return capacidade;}
 
+    //
     public int setParticipantes(String nome){
 
         if(!participantes.add(nome)){

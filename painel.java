@@ -142,7 +142,7 @@ public class painel {
             return 11; //Não existe nenhum evento cadastrado no momento.
         }
 
-        evento comprar = eventos.get(id);
+        evento comprar = eventos.get(id); //
         HashMap<Integer, Integer> verificarLotes = ingressos.get(id);
 
 
