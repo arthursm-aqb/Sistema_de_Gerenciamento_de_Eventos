@@ -145,8 +145,13 @@ public class painel {
         evento comprar = eventos.get(id); //
         HashMap<Integer, Integer> verificarLotes = ingressos.get(id);
 
+        if(verificarLotes==null){
+            return 16; // Código que indica que Lotes é nulo
+        }
+
 
         int quantidadeIngressos = input.nextInt();
+        input.nextLine();
 
         // Verifica se o usuário digitou um valor válido para compra de ingressos
         if(quantidadeIngressos<1){
@@ -169,7 +174,7 @@ public class painel {
         if(quantidadeIngressos==1){
             String nomeParticipante = input.nextLine();
             int validade = Eventos.get(id).setParticipantes(nomeParticipante);
-            if(Eventos.get(id).setParticipantes(nomeParticipante)==-1) return 14; // Código que indica que o participante já cadastrado anteriormente
+            if(validade==-1) return 14; // Código que indica que o participante já cadastrado anteriormente
             int deduzirIngressos = ingressos.get(id).get(loteValido);
             verificarLotes.put(loteValido, deduzirIngressos-1);
 
