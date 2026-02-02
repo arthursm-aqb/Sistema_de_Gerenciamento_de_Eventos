@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
 
 public class painel {
 
@@ -11,7 +10,8 @@ public class painel {
     private evento getEvento(int ID){
         if(!Eventos.containsKey(ID)){ return null;}
         return Eventos.get(ID);
-    }
+    } // Retorna um objeto evento com base na ID
+
     // Construtor
     public painel(){
 
@@ -20,10 +20,13 @@ public class painel {
         this.Eventos = new HashMap<>();
     }
 
+    // Retorna um map com os eventos cadastrados
     public HashMap<Integer, evento> getEventos() { return Eventos;}
+
+    // Retorna um map de um map com os lotes e ingressos dos eventos
     public HashMap<Integer, HashMap<Integer, Integer>> getLotesIngressos() { return lotesIngressos;}
 
-    // Retorna ID do evento se achar algum igual ao nome dado como argumento para função
+    // Busca o ID de um evento baseado no nome fornecido.
     public int pegarID(String nomeEvento){
 
         if(Eventos.isEmpty()) return -2; // Código de retorno que indica que não existe nenhum evento cadastrado
@@ -37,6 +40,7 @@ public class painel {
         return -1; // Código de retorno que indica que não foi possível achar um evento com o nome passado como argumento.
     }
 
+    // Cria um novo objeto Evento e o armazena no mapa de eventos. O ID é gerado automaticamente de forma incremental.
     public void criarEvento(String nomeEvento, int capacidade){
 
         evento novo = new evento(nomeEvento, capacidade);
@@ -45,6 +49,7 @@ public class painel {
 
     }
 
+    // Cria ou adiciona lotes de ingressos a um evento existente. Realiza a validação para garantir que a soma dos lotes não ultrapasse a capacidade total do evento.
     public int criarLotes(String nomeEvento, ArrayList<Integer> ingressosLotes){
 
         int chave = pegarID(nomeEvento);
@@ -64,7 +69,6 @@ public class painel {
                     return -1; // O número de ingresoss ultrapassam a capacidade do evento
                 }
 
-                HashMap<Integer, Integer> tempLotes = lotesIngressos.get(chave);
                 for(int i = 1; i<=ingressosLotes.size(); i++){
                     lotesIngressos.computeIfAbsent(chave, k-> new HashMap<>()).put(i, ingressosLotes.get(i-1));
                 }
@@ -101,6 +105,7 @@ public class painel {
 
     }
 
+    // Realiza a venda de ingresso para um único participante. Verifica disponibilidade nos lotes, cadastra o participante e desconta do estoque.
     public int venderIngresso(String nomeEvento, int quantidadeIngresso, Participante participante) {
 
         // Verifica se o evento existe
@@ -112,7 +117,6 @@ public class painel {
             return 11; //Não existe nenhum evento cadastrado no momento.
         }
 
-        evento comprar = Eventos.get(id); //
         HashMap<Integer, Integer> verificarLotes = lotesIngressos.get(id);
 
         if(verificarLotes==null){
@@ -149,6 +153,7 @@ public class painel {
 
     }
 
+    // Realiza a venda de ingressos para uma lista de participantes. Gerencia casos onde alguns participantes já podem estar cadastrados.
     public int venderIngresso(String nomeEvento, int quantidadeIngresso, HashSet<Participante> participantes) {
 
         // Verifica se o evento existe
@@ -160,7 +165,6 @@ public class painel {
             return 11; //Não existe nenhum evento cadastrado no momento.
         }
 
-        evento comprar = Eventos.get(id); //
         HashMap<Integer, Integer> verificarLotes = lotesIngressos.get(id);
 
         if(verificarLotes==null){
@@ -207,6 +211,7 @@ public class painel {
 
     }
 
+    // Adiciona uma lista de palestrantes a um evento.
     public int adicionarPalestrantes(String nomeEvento, HashSet<Palestrante> palestrantes) {
 
         int id = pegarID(nomeEvento);
@@ -214,9 +219,9 @@ public class painel {
         if(id == -1) return 10; // Evento não encontrado
         if(id == -2) return 11; // Sem eventos cadastrados
 
-        ArrayList<Integer> resultado = Eventos.get(id).setPalestrantes(palestrantes);
+        ArrayList<Integer> resultado = Eventos.get(id).adicionarPalestrantes(palestrantes);
 
-        int status = resultado.get(0);
+        int status = resultado.getFirst();
 
         if (status == -1) {
             return 31; // Nenhum palestrante adicionado (todos já existiam)
@@ -227,6 +232,7 @@ public class painel {
         return 30; // Sucesso Total (todos adicionados)
     }
 
+    // Adiciona um único palestrante ao evento.
     public int adicionarPalestrante(String nomeEvento, Palestrante palestrante) {
         int id = pegarID(nomeEvento);
 
@@ -237,16 +243,17 @@ public class painel {
         HashSet<Palestrante> temp = new HashSet<>();
         temp.add(palestrante);
 
-        ArrayList<Integer> resultado = Eventos.get(id).setPalestrantes(temp);
+        ArrayList<Integer> resultado = Eventos.get(id).adicionarPalestrantes(temp);
 
         // Mapeia o retorno do ArrayList para códigos de controle do Painel
-        if (resultado.get(0) == -1) {
+        if (resultado.getFirst() == -1) {
             return 31; // Código indicando que o palestrante já existe
         }
 
         return 30; // Código indicando Sucesso
     }
 
+    // Remove um palestrante do evento baseando-se no Nome e CPF.
     public int removerPalestrante(String nome, String cpf, int id){
 
         evento tempEvento = null;
