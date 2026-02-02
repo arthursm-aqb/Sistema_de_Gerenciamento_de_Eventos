@@ -282,6 +282,67 @@ public class painel {
         return new Resumo(0, "Palestrante " + nome + " removido com sucesso!"); // Palestrante removido com sucesso
     }
 
+    // Retorna um objeto participante
+    public Participante buscarParticipante(String nomeEvento, String cpf) {
+        int id = pegarID(nomeEvento);
+        if (id < 0) return null;
+
+        evento e = Eventos.get(id);
+        for (Participante p : e.getNomeParticipantes()) {
+            if (p.getCpf().equals(cpf)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    // Retorna um objeto palestrante
+    public Palestrante buscarPalestrante(String nomeEvento, String cpf) {
+        int id = pegarID(nomeEvento);
+        if (id < 0) return null;
+
+        evento e = Eventos.get(id);
+        // Itera sobre o HashSet de palestrantes
+        for (Palestrante p : e.getNomePalestrantes()) {
+            if (p.getCpf().equals(cpf)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    // Remove um participante do evento
+    public Resumo removerParticipante(String nomeEvento, String cpf) {
+        int id = pegarID(nomeEvento);
+        if (id == -1) return new Resumo(10, "Evento não encontrado.");
+
+        evento e = Eventos.get(id);
+        Participante alvo = null;
+
+        // Busca o participante
+        for (Participante p : e.getNomeParticipantes()) {
+            if (p.getCpf().equals(cpf)) {
+                alvo = p;
+                break;
+            }
+        }
+
+        if (alvo == null) return new Resumo(41, "Participante não encontrado.");
+
+        // Remove do HashSet do evento
+        HashSet<Participante> remocao = new HashSet<>();
+        remocao.add(alvo);
+
+        boolean removeu = e.removerParticipantes(remocao);
+
+        if (removeu) {
+            // Nota: Para ser perfeito, precisaria devolver o ingresso ao lote,
+            // mas para este exercício focaremos na lógica do certificado.
+            return new Resumo(0, "Participante removido com sucesso.");
+        } else {
+            return new Resumo(42, "Erro ao remover participante.");
+        }
+    }
 }
 
 
