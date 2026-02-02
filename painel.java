@@ -50,7 +50,7 @@ public class painel {
     }
 
     // Cria ou adiciona lotes de ingressos a um evento existente. Realiza a validação para garantir que a soma dos lotes não ultrapasse a capacidade total do evento.
-    public int criarLotes(String nomeEvento, ArrayList<Integer> ingressosLotes){
+    public Resumo criarLotes(String nomeEvento, ArrayList<Integer> ingressosLotes){
 
         int chave = pegarID(nomeEvento);
 
@@ -66,7 +66,7 @@ public class painel {
                 }
 
                 if(sum>temp.getCapacidade()){
-                    return -1; // O número de ingresoss ultrapassam a capacidade do evento
+                    return new Resumo(-1, "O número de ingresoss ultrapassam a capacidade do evento. Capacidade do evento: " + temp.getCapacidade() + " pessoas.");
                 }
 
                 for(int i = 1; i<=ingressosLotes.size(); i++){
@@ -85,7 +85,7 @@ public class painel {
                 }
 
                 if(sum>temp.getCapacidade()){
-                    return -1; // O número de ingresoss ultrapassam a capacidade do evento
+                    return new Resumo(-1, "O número de ingresoss ultrapassam a capacidade do evento. Capacidade do evento: " + temp.getCapacidade() + " pessoas."); // O número de ingresoss ultrapassam a capacidade do evento
                 }
 
                 int index = tempLotes.size()+1;
@@ -98,39 +98,41 @@ public class painel {
             }
 
         } else{
-            return -2; // Evento não existe
+            return new Resumo(-2, "O evento não existe");
         }
 
-        return 0; // Lote criado com sucesso
+        return new Resumo(0, ingressosLotes.size()+" lotes criados com sucesso.");
 
     }
 
     // Realiza a venda de ingresso para um único participante. Verifica disponibilidade nos lotes, cadastra o participante e desconta do estoque.
-    public int venderIngresso(String nomeEvento, int quantidadeIngresso, Participante participante) {
+    public Resumo venderIngresso(String nomeEvento, int quantidadeIngresso, Participante participante) {
 
         // Verifica se o evento existe
         int id = pegarID(nomeEvento);
 
         if(id==-1){
-            return 10; // Não existe evento com esse nome, então retorna o código 10 (Nome do evento não existe)
+            return new Resumo(10, "Evento não existe"); // Não existe evento com esse nome, então retorna o código 10 (Nome do evento não existe)
         } else if(id==-2){
-            return 11; //Não existe nenhum evento cadastrado no momento.
+            return new Resumo(11, "Não existe nenhum evento cadastrado no momento"); //Não existe nenhum evento cadastrado no momento.
         }
 
         HashMap<Integer, Integer> verificarLotes = lotesIngressos.get(id);
 
         if(verificarLotes==null){
-            return 16; // Código que indica que Lotes é nulo
+            return new Resumo(16, "Não existe nenhum lote cadastrado no momento"); // Código que indica que Lotes é nulo
         }
 
         // Verifica se o usuário digitou um valor válido para compra de ingressos
         if(quantidadeIngresso<1 || quantidadeIngresso>1){
-            return 12; // Código que indica quantidade inválida de ingressos (x>0)
+            return new Resumo(12, "Quantidade inválida de ingressos. (x<1 ou x>1)"); // Código que indica quantidade inválida de ingressos (x>0)
         }
 
         // Verifica se existe lotes com ingressos suficientes
         int loteValido = -1;
+        int ingressos = 0;
         for(int key : verificarLotes.keySet()){
+            ingressos+=verificarLotes.get(key);
             if(verificarLotes.get(key)>=quantidadeIngresso){
                 loteValido = key;
                 break;
@@ -138,42 +140,42 @@ public class painel {
         }
 
         if(loteValido == -1){
-            return 13; // Código que indica que não existe mais ingressos para o evento suficientes para quantidade desejada do usuário
+            return new Resumo(13, "Não existe mais ingressos suficientes para o pedido do usuário. Ingressos restantes: " + ingressos); // Código que indica que não existe mais ingressos para o evento suficientes para quantidade desejada do usuário
         }
 
 
         int validade = Eventos.get(id).adicionarParticipantes(participante);
-        if(validade==-1) return 14; // Código que indica que o participante já cadastrado anteriormente
+        if(validade==-1) return new Resumo(14, "Participante " + participante.getNome() +" do CPF - "+ participante.getCpf()+" já foi cadastrado anteriormente!"); // Código que indica que o participante já cadastrado anteriormente
         int deduzirIngressos = lotesIngressos.get(id).get(loteValido);
         verificarLotes.put(loteValido, deduzirIngressos-1);
 
 
         // Se existe, então deduz do lote atual a quantidade de ingressos
-        return 23; // Código que indica que o participante foi cadastrado com sucesso
+        return new Resumo(23, "Participante " + participante.getNome() + " do CPF - "+ participante.getCpf()+ ", cadastrado com sucesso!" ); // Código que indica que o participante foi cadastrado com sucesso
 
     }
 
     // Realiza a venda de ingressos para uma lista de participantes. Gerencia casos onde alguns participantes já podem estar cadastrados.
-    public int venderIngresso(String nomeEvento, int quantidadeIngresso, HashSet<Participante> participantes) {
+    public Resumo venderIngresso(String nomeEvento, int quantidadeIngresso, HashSet<Participante> participantes) {
 
         // Verifica se o evento existe
         int id = pegarID(nomeEvento);
 
         if(id==-1){
-            return 10; // Não existe evento com esse nome, então retorna o código 10 (Nome do evento não existe)
+            return new Resumo(10, "Evento não existe"); // Não existe evento com esse nome, então retorna o código 10 (Nome do evento não existe)
         } else if(id==-2){
-            return 11; //Não existe nenhum evento cadastrado no momento.
+            return new Resumo(11, "Não existe nenhum evento cadastrado no momento"); //Não existe nenhum evento cadastrado no momento.
         }
 
         HashMap<Integer, Integer> verificarLotes = lotesIngressos.get(id);
 
         if(verificarLotes==null){
-            return 16; // Código que indica que Lotes é nulo
+            return new Resumo(16, "Não existe nenhum lote cadastrado no momento"); // Código que indica que Lotes é nulo
         }
 
         // Verifica se o usuário digitou um valor válido para compra de ingressos
         if(quantidadeIngresso<1 || quantidadeIngresso==1){
-            return 12; // Código que indica quantidade inválida de ingressos (x>0)
+            return new Resumo(12, "Quantidade inválida de ingressos. (x>0 e x!=1)"); // Código que indica quantidade inválida de ingressos (x>0)
         }
 
         // Verifica se existe lotes com ingressos suficientes
@@ -185,59 +187,62 @@ public class painel {
             }
         }
 
+        int ingressos = 0;
+        for(int x : verificarLotes.values()){ingressos+=x;}
+
         if(loteValido == -1){
-            return 13; // Código que indica que não existe mais ingressos para o evento suficientes para quantidade desejada do usuário
+            return new Resumo(13, "Não existe mais ingressos suficientes para o pedido do usuário. Ingressos restantes: " + ingressos); // Código que indica que não existe mais ingressos para o evento suficientes para quantidade desejada do usuário
         }
 
 
 
         ArrayList<Integer> validade = Eventos.get(id).adicionarParticipantes(participantes);
         if(validade.get(0)==-1){
-            return 15; // Código que indica que nenhum participante foi cadastrado por algum motivo
+            return new Resumo(15, "Nenhum participante foi cadastrado"); // Código que indica que nenhum participante foi cadastrado por algum motivo
         }
         if(validade.get(0)==1){
 
             int deduzirIngressos = lotesIngressos.get(id).get(loteValido);
             deduzirIngressos = deduzirIngressos - validade.get(1);
             verificarLotes.put(loteValido, deduzirIngressos);
-            return 21; // Código que indica que nem todos os participantes foram adicionados
+            return new Resumo(21, "Nem todos os participantes foram registrados"); // Código que indica que nem todos os participantes foram adicionados
         }
 
 
         int deduzirIngressos = lotesIngressos.get(id).get(loteValido);
         deduzirIngressos = deduzirIngressos - quantidadeIngresso;
         verificarLotes.put(loteValido, deduzirIngressos);
-        return 22; // Código que indica que todos os participantes foram adicionados com sucesso;
+        return new Resumo(22, "Todos os participantes foram registrados com sucesso!"); // Código que indica que todos os participantes foram adicionados com sucesso;
 
     }
 
     // Adiciona uma lista de palestrantes a um evento.
-    public int adicionarPalestrantes(String nomeEvento, HashSet<Palestrante> palestrantes) {
+    public Resumo adicionarPalestrantes(String nomeEvento, HashSet<Palestrante> palestrantes) {
 
         int id = pegarID(nomeEvento);
 
-        if(id == -1) return 10; // Evento não encontrado
-        if(id == -2) return 11; // Sem eventos cadastrados
+        if(id == -1) return new Resumo(10, "Evento não encontrado"); // Evento não encontrado
+        if(id == -2) return new Resumo(11,"Não há nenhum evento cadastrado no momento"); // Sem eventos cadastrados
 
         ArrayList<Integer> resultado = Eventos.get(id).adicionarPalestrantes(palestrantes);
 
         int status = resultado.getFirst();
 
         if (status == -1) {
-            return 31; // Nenhum palestrante adicionado (todos já existiam)
+            return new Resumo(31,"Todos os palestrantes já estavam cadastrados"); // Nenhum palestrante adicionado (todos já existiam)
         } else if (status == 1) {
-            return 32; // Sucesso Parcial (alguns foram adicionados, outros já existiam)
+            return new Resumo(32, "Alguns participantes foram cadastrados com sucesso (alguns participantes já estavam cadastrados)."); // Sucesso Parcial (alguns foram adicionados, outros já existiam)
         }
 
-        return 30; // Sucesso Total (todos adicionados)
+        return new Resumo(30,"Todo os palestrantes cadastrados com sucesso."); // Sucesso Total (todos adicionados)
     }
 
     // Adiciona um único palestrante ao evento.
-    public int adicionarPalestrante(String nomeEvento, Palestrante palestrante) {
+    public Resumo adicionarPalestrante(String nomeEvento, Palestrante palestrante) {
         int id = pegarID(nomeEvento);
 
-        if(id == -1) return 10; // Evento não encontrado
-        if(id == -2) return 11; // Sem eventos cadastrados
+        if(id == -1) return new Resumo(10, "Evento não encontrado"); // Evento não encontrado
+        if(id == -2) return new Resumo(11,"Não há nenhum evento cadastrado no momento"); // Sem eventos cadastrados
 
 
         HashSet<Palestrante> temp = new HashSet<>();
@@ -247,19 +252,19 @@ public class painel {
 
         // Mapeia o retorno do ArrayList para códigos de controle do Painel
         if (resultado.getFirst() == -1) {
-            return 31; // Código indicando que o palestrante já existe
+            return new Resumo(31,"O palestrante " + palestrante.getNome()+" já estar cadastrado"); // Código indicando que o palestrante já existe
         }
 
-        return 30; // Código indicando Sucesso
+        return new Resumo(30,"O palestrante " +  palestrante.getNome() +" foi cadastrado com sucesso."); // Código indicando Sucesso
     }
 
     // Remove um palestrante do evento baseando-se no Nome e CPF.
-    public int removerPalestrante(String nome, String cpf, int id){
+    public Resumo removerPalestrante(String nome, String cpf, int id){
 
         evento tempEvento = null;
         tempEvento = Eventos.get(id);
 
-        if(tempEvento==null){ return 40;} // Evento inválido
+        if(tempEvento==null){ return new Resumo(40,"Evento inválido" );}
 
         HashSet<Palestrante> tempPalestrante = tempEvento.getNomePalestrantes();
         Palestrante remover = null;
@@ -270,11 +275,11 @@ public class painel {
             }
         }
 
-        if(remover == null){ return 41;} // Palestrante não existe
+        if(remover == null){ return new Resumo(41,"Palestrante inválido");} // Palestrante não existe
 
-        if(!tempEvento.removerPalestrante(remover)){ return 42;} // Não foi possível remover o palestrante
+        if(!tempEvento.removerPalestrante(remover)){ return new Resumo(42,"Não foi possível remover o palestrante " + nome);} //
 
-        return 0; // Palestrante removido com sucesso
+        return new Resumo(0, "Palestrante " + nome + " removido com sucesso!"); // Palestrante removido com sucesso
     }
 
 }
