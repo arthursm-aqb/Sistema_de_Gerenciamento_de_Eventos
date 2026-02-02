@@ -147,4 +147,9 @@ public class evento{
     public void gerarCertificado(Participante participante){
         participante.getCertificado("Certificado de comparecimento do evento "+getEvento()+ " ao participante "+ participante.getNome()+"!");
     }
+
+    // Gera e atribui o texto do certificado para um palestrante específico.
+    public void gerarCertificado(Palestrante palestrante){
+        palestrante.getCertificado("Certificado de participação como palestrante do evento " + getEvento() + " ao Sr. || Sra. " + palestrante.getNome()+" de especialidade " + palestrante.getEspecialidade()+ "!");
+    }
 }
