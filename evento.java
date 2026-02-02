@@ -10,6 +10,7 @@ public class evento{
     private int numParticipantes;
     private final int capacidade;
 
+    // Construtor. Inicializa as listas de participantes e palestrantes e define a capacidade.
     public evento(String evento, int capacidade){
 
         nomeEvento = evento;
@@ -21,14 +22,25 @@ public class evento{
 
     }
 
+    // Retorna o nome do evento
     public String getEvento(){ return this.nomeEvento;}
+
+    // Retorna o conjunto de participantes cadastrados.
     public HashSet<Participante> getNomeParticipantes(){ return this.participantes;}
+
+    // Retorna o conjunto (HashSet) de palestrantes cadastrados.
     public HashSet<Palestrante> getNomePalestrantes(){ return this.palestrantes;}
+
+    // Retorna a quantidade atual de participantes.
     public int getNumParticipantes(){ return this.numParticipantes;}
+
+    // Retorna a quantidade atual de palestrantes.
     public int getNumPalestrantes(){ return this.numPalestrantes;}
+
+    // Retorna a capacidade máxima do evento.
     public int getCapacidade(){ return capacidade;}
 
-    //
+    // Adiciona um único participante ao evento. 1 = sucesso (participante adicionado) e -1 = falha (participante já estava cadastrado).
     public int adicionarParticipantes(Participante unico){
 
         if(!participantes.add(unico)){
@@ -40,6 +52,7 @@ public class evento{
 
     }
 
+    // Adiciona um lote de participantes ao evento e verifica duplicatas automaticamente via HashSet. Index [0]: (-1 = todos já existiam/falha, 1 = parcialmente adicionados, 0 = todos adicionados com sucesso) e Index [1]: quantidade de novos participantes efetivamente cadastrados (presente apenas se index[0] for 0 ou 1).
     public ArrayList<Integer> adicionarParticipantes(HashSet<Participante> nomes){
 
         int tamNomes = nomes.size();
@@ -71,6 +84,7 @@ public class evento{
         
     }
 
+    // Remove um grupo de participantes do evento.
     public boolean removerParticipantes(HashSet<Participante> listaParticipantes){
 
 
@@ -84,9 +98,8 @@ public class evento{
 
     }
 
-
-
-    public ArrayList<Integer> setPalestrantes(HashSet<Palestrante> listaPalestrantes){
+    // Adiciona um grupo de palestrantes ao evento.
+    public ArrayList<Integer> adicionarPalestrantes(HashSet<Palestrante> listaPalestrantes){
         int tamNomes = palestrantes.size();
         int tamAtual = this.palestrantes.size();
 
@@ -116,6 +129,7 @@ public class evento{
 
     }
 
+    // Remove um palestrante específico do evento.
     public boolean removerPalestrante(Palestrante palestrante){
 
 
@@ -129,7 +143,8 @@ public class evento{
 
     }
 
-    public void setCertificado(Participante participante){
+    // Gera e atribui o texto do certificado para um participante específico.
+    public void gerarCertificado(Participante participante){
         participante.getCertificado("Certificado de comparecimento do evento "+getEvento()+ " ao participante "+ participante.getNome()+"!");
     }
 }
