@@ -100,7 +100,7 @@ public class evento{
 
     // Adiciona um grupo de palestrantes ao evento.
     public ArrayList<Integer> adicionarPalestrantes(HashSet<Palestrante> listaPalestrantes){
-        int tamNomes = palestrantes.size();
+        int tamNomes = listaPalestrantes.size();
         int tamAtual = this.palestrantes.size();
 
         if(!this.palestrantes.addAll(listaPalestrantes)){
