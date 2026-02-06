@@ -20,6 +20,103 @@
 
 ## Modo de utilização
 
-# O usuário é apresentado ao sistema com um menu progressivo, várias funcionalidades precisam ser desbloqueadas, dessa forma evita do usuário cometer erros que podem comprometer o sistema. A primeira tela ao usuário é uma com a opção de criar um novo evento e, depois da criação de um evento, liberam-se adicionar lotes de ingresso e adicionar Palestrante. Por fim, om lotes criados, libera-se a venda de Ingressos, que libera remover participantes e gerar certificados. Assim, o relatório geral fica disponível após o fluxo básico ser concluído. Além disso, Ao gerar um certificado, o CPF é adicionado a uma lista de bloqueio e a remoção desse CPF torna-se proibida.
+#### O usuário é apresentado ao sistema com um menu progressivo, várias funcionalidades precisam ser desbloqueadas, dessa forma evita do usuário cometer erros que podem comprometer o sistema. A primeira tela ao usuário é uma com a opção de criar um novo evento e, depois da criação de um evento, liberam-se adicionar lotes de ingresso e adicionar Palestrante. Por fim, om lotes criados, libera-se a venda de Ingressos, que libera remover participantes e gerar certificados. Assim, o relatório geral fica disponível após o fluxo básico ser concluído. Além disso, Ao gerar um certificado, o CPF é adicionado a uma lista de bloqueio e a remoção desse CPF torna-se proibida.
+
+## Diagrama de Classes - Sistema de Gerenciamento de Eventos
+```mermaid
+classDiagram
+    %% Relações de Herança
+    Pessoa <|-- Participante
+    Pessoa <|-- Palestrante
+
+    %% Relações de Implementação
+    Certificado <|.. Participante
+    Certificado <|.. Palestrante
+
+    %% Relações de Associação e Dependência
+    Interface ..> painel : usa
+    Interface ..> Resumo : usa
+    painel *-- "0..*" evento : gerencia
+    painel ..> Resumo : retorna
+    evento o-- "0..*" Participante : contém
+    evento o-- "0..*" Palestrante : contém
+    
+    class Resumo {
+        <<Record>>
+        +int codigo
+        +String mensagem
+    }
+
+    class Certificado {
+        <<Interface>>
+        +getCertificado(String texto) void
+    }
+
+    class Pessoa {
+        <<Abstract>>
+        #String nome
+        #String cpf
+        +getNome() String
+        +getCpf() String
+    }
+
+    class Participante {
+        -String certificado
+        +getCertificado(String texto) void
+        +toString() String
+    }
+
+    class Palestrante {
+        -String especialidade
+        -String certificado
+        +getEspecialidade() String
+        +getCertificado(String texto) void
+        +toString() String
+    }
+
+    class evento {
+        -String nomeEvento
+        -HashSet~Participante~ participantes
+        -HashSet~Palestrante~ palestrantes
+        -int capacidade
+        +adicionarParticipantes(...)
+        +adicionarPalestrantes(...)
+        +removerParticipantes(...)
+        +removerPalestrante(...)
+        +gerarCertificado(Participante p) void
+        +gerarCertificado(Palestrante p) void
+    }
+
+    class painel {
+        -HashMap~Integer, evento~ Eventos
+        -HashMap~Integer, HashMap~ lotesIngressos
+        +criarEvento(...)
+        +criarLotes(...)
+        +venderIngresso(...)
+        +adicionarPalestrante(...)
+        +removerPalestrante(...)
+        +removerParticipante(...)
+        +buscarParticipante(...)
+        +buscarPalestrante(...)
+    }
+
+    class Interface {
+        <<Main>>
+        -ArrayList~String~ cpfsCertificados
+        -ArrayList~String~ cpfsPalestrantesCertificados
+        +main(String[] args)
+        -criarEvento(...)
+        -criarLotes(...)
+        -venderIngresso(...)
+        -adicionarPalestrante(...)
+        -removerParticipante(...)
+        -removerPalestrante(...)
+        -gerarCertificadoParticipante(...)
+        -gerarCertificadoPalestrante(...)
+        -listarRelatorioEventos(...)
+    }
+
+
+
 
 
